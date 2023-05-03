@@ -1,7 +1,7 @@
 import json
+import sys
 
-
-def generate_json_file():
+def generate_json_file(ver):
     files = {
         "404": "404",
         "/": "index",
@@ -9,7 +9,7 @@ def generate_json_file():
         #    "/2": "2",
         #    "/3": "3",
     }
-    result = {}
+    result = {"_version": ver}
     for file in files:
         print("Generating " + file + "...")
         with open("www/" + files[file] + ".html", "r") as f:
@@ -25,4 +25,10 @@ def generate_json_file():
 
 
 if __name__ == "__main__":
-    generate_json_file()
+    if "Rev." in sys.argv[-1]:
+        ver = sys.argv[-1]
+    else:
+        ver = "N/A"
+    generate_json_file(ver)
+    if ver == "N/A":
+        print('Hint: Run with "Rev. ___" to set the "_version" file')

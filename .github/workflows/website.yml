@@ -1,0 +1,35 @@
+name: Generate Website
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.8"]
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v3
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Set Version
+        id: vars
+        run: echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+      - name: Generate JSON File
+        run: python3 generate.py "Rev. ${{ steps.vars.outputs.sha_short }}"
+      - name: Upload JSON File
+        uses: djnicholson/release-action@v2.11
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          release-name: "Website Rev. ${{ steps.vars.outputs.sha_short }}"
+          tag-name: "web-rev-${{ steps.vars.outputs.sha_short }}"
+          asset-name: "files.json"
+          file: "files.json"
