@@ -41,7 +41,7 @@ else:
 def web_server(file: str):
     files = FILE
     page = str(dict(files).get(file))
-    if page == None:
+    if page == "None":
         return str(dict(files).get("404"))
     return page
 
