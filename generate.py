@@ -9,7 +9,7 @@ def generate_json_file(ver):
         #    "/2": "2",
         #    "/3": "3",
     }
-    result = {"/_version": ver}
+    result = {"/_version": "<b>" + ver + "</b><br><a href='/'>[ Volver ]</a>"}
     for file in files:
         print("Generating " + file + "...")
         with open("www/" + files[file] + ".html", "r") as f:
