@@ -7,8 +7,6 @@ except:
     import socket
 from secrets import SSID, PASS
 import urequests
-
-
 def FILE():
     l = open("files.json", "r")
     DATA = l.read()
@@ -23,11 +21,11 @@ def update():
 def web_server(file: str):
     files = FILE()
     page = str(dict(files).get(file))
-    if page == "None":
-        return str(dict(files).get("404"))
     if file == "/_update":
         print("Updating")
         update()
+    if page == "None":
+        return str(dict(files).get("404"))
     return page
 
 
