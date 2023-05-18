@@ -1,5 +1,4 @@
 from machine import Pin
-import network
 import time
 
 try:
@@ -7,42 +6,28 @@ try:
 except:
     import socket
 from secrets import SSID, PASS
-
-l = open("files.json", "r")
-
-DATA = l.read()
-FILE = eval(DATA)
+import urequests
 
 
-l.close()
-
-wlan = network.WLAN(network.STA_IF)
-wlan.active(True)
-wlan.connect(SSID, PASS)  # ssid, password
-
-# connect the network
-wait = 15
-while wait > 0:
-    if wlan.status() < 0 or wlan.status() >= 3:
-        break
-    wait -= 1
-    print("waiting for connection...")
-    time.sleep(1)
-
-# Handle connection error
-if wlan.status() != 3:
-    raise RuntimeError("wifi connection failed")
-else:
-    print("connected")
-    ip = wlan.ifconfig()[0]
-    print("IP: ", ip)
-
-
+def FILE():
+    l = open("files.json", "r")
+    DATA = l.read()
+    FILE = eval(DATA)
+    l.close()
+    return FILE
+def update():
+    r = urequests.request("GET", "https://github.com/naielv/AxelWebServer/releases/latest/download/files.json")
+    l = open("files.json", "w")
+    l.write(r.text)
+    l.close()
 def web_server(file: str):
-    files = FILE
+    files = FILE()
     page = str(dict(files).get(file))
     if page == "None":
         return str(dict(files).get("404"))
+    if file == "/_update":
+        print("Updating")
+        update()
     return page
 
 
@@ -69,3 +54,4 @@ while True:
     except OSError as e:
         conn.close()
         print("Connection closed")
+
